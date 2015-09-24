@@ -1,0 +1,251 @@
+;;; minimal sag .emacs
+
+(set-default-font "Consolas 8")
+
+;;; make ctrl scroll wheel increase or decrease text
+;(global-set-key [C-mouse-4] '(lambda () (interactive) (text-scale-increase 1))) ; also c-x c-=
+;(global-set-key [C-mouse-5] '(lambda () (interactive) (text-scale-decrease 1))) ; also c-x c--
+(global-set-key (kbd "<C-wheel-down>") 'text-scale-decrease) 
+(global-set-key (kbd "<C-wheel-up>") 'text-scale-increase) 
+
+(global-set-key [M-p] 'comint-previous-matching-input-from-input)
+(global-set-key [M-n] 'comint-nnext-matching-input-from-input)
+
+(global-set-key (kbd "C-<f4>") 'kill-this-buffer)
+
+(global-set-key (kbd "<f5>") 'revert-buffer)
+
+(global-set-key (kbd "<f6>") 'auto-revert-tail-mode)
+(global-set-key (kbd "<f7>") 'query-replace)
+(global-set-key (kbd "<f8>") 'query-replace-regexp)
+
+(global-set-key (kbd "<f12>") 'toggle-truncate-lines)
+(global-set-key (kbd "S-<f12>") 'visual-line-mode)
+
+
+
+;;; Shell mode
+(setq ansi-color-names-vector ; better contrast colors
+      ["black" "red4" "green4" "yellow4"
+       "blue3" "magenta4" "cyan4" "white"])
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(column-number-mode t)
+ '(inhibit-startup-screen t)
+ '(show-paren-mode t)
+ '(visible-bell t))
+
+;Try M-x toggle-truncate-lines on a per buffer basis, to see if it does what you want.
+;In .emacs you'd put this, to make it default for all buffers.
+(setq-default truncate-lines t)
+
+;You may also like:
+;(setq-default global-visual-line-mode t)
+;Which you can try out with M-x visual-line-mode (it also toggles.)
+
+(defun sag-log-setup ()
+  "sag logs setup vars"
+  (interactive)
+  (setq git-dir "c:/Users/jora/git/http")
+  (setq idc-dir (concat git-dir "/infradc"))
+  (setq cmp-dir (concat git-dir "/cmp"))
+  (setq idc-platform-log-file (concat idc-dir "/staging/installs/common/runtime/agent/logs/platform.log" ))
+
+  (setq sag-install-dir "c:/SoftwareAG")
+  (setq opt-install-dir sag-install-dir)
+  (setq mws-install-dir sag-install-dir)
+  (setq idc-install-dir sag-install-dir)
+
+  (setq opt-log-loc "/optimize/analysis/logs/info.log")
+  (setq opt-log-file (concat opt-install-dir opt-log-loc))
+
+  (setq mws-log-loc "/MWS/server/default/logs/_full_.log")
+  (setq mws-log-file (concat mws-install-dir mws-log-loc))
+
+  (setq idc-log-loc "/profiles/InfraDC/logs/server.log")
+  (setq idc-dev-file (concat "c:/Users/jora/git/http/infradc/staging/installs" idc-log-loc))
+  (setq idc-log-file (concat sag-install-dir idc-log-loc))
+;  (setq idc-log-file idc-dev-file) 
+)
+(defun sag-platform-log () 
+  "platform.log idc"
+  (interactive)
+  (sag-log-setup)
+  (make-frame-command)
+  (other-frame 1)
+
+  (find-file idc-platform-log-file)
+
+)
+
+(defun sag-log-idc ()
+  "sag logs idc"
+  (interactive)
+  (sag-log-setup)
+  (make-frame-command)
+  (other-frame 1)
+
+  (find-file idc-log-file)
+; (find-file idc-dev-file)
+;  (find-file "c:/Users/jora/git/http/infradc/staging/installs/profiles/InfraDC/logs/server.log")
+  ;(other-window 1)
+  (setq 'truncate-lines t)
+  ;(auto-revert-tail-mode)
+  (end-of-buffer)
+)
+
+(defun sag-log-idc-dev ()
+  "sag logs idc"
+  (interactive)
+  (sag-log-setup)
+  (make-frame-command)
+  (other-frame 1)
+
+ (find-file idc-dev-file)
+;  (find-file "c:/Users/jora/git/http/infradc/staging/installs/profiles/InfraDC/logs/server.log")
+  ;(other-window 1)
+  (setq 'truncate-lines t)
+  ;(auto-revert-tail-mode)
+  (end-of-buffer)
+)
+
+(defun sag-log-optimize ()
+  "sag logs optimize"
+  (interactive)
+  (sag-log-setup)
+  (make-frame-command)
+  (other-frame 1)
+
+  (find-file opt-log-file)
+; (find-file opt-dev-file)
+  ;(other-window 1)
+  (setq 'truncate-lines t)
+  ;(auto-revert-tail-mode)
+  (end-of-buffer)
+)
+
+
+(defun sag-logs ()
+  "sag logs"
+  (interactive)
+  (sag-log-setup)
+  (make-frame-command)
+  (other-frame 1)
+  (find-file opt-log-file)
+
+;  (setq 'truncate-lines t)
+ ; (auto-revert-tail-mode)
+  (end-of-buffer)
+
+ (find-file-other-window  mws-log-file)
+ ; (auto-revert-tail-mode)
+  (end-of-buffer)
+  
+  (split-window-vertically)   ;; want two windows at startup 
+  (other-window 1)              ;; move to other window
+
+  (find-file idc-log-file)
+; (find-file idc-dev-file)
+;  (setq 'truncate-lines t)
+  ;(auto-revert-tail-mode)
+  (end-of-buffer)
+  
+  (balance-windows)
+)
+
+
+(global-font-lock-mode t) ; t) ;means that we want fontification in all modes.
+
+
+(setq font-lock-maximum-decoration t) ;denotes our interest in maximum possible fontification.
+; no scratch
+(setq initial-scratch-message nil)
+(kill-buffer "*scratch*")
+
+;will allow you to type just "y" instead of "yes" when you exit.
+(fset 'yes-or-no-p 'y-or-n-p) 
+
+;; show the column number in each mode line
+(column-number-mode 1)
+
+(defun jr-start ()
+  (interactive)
+  (find-file "c:/")
+  (find-file "c:/Software")
+  (find-file "c:/jorabin")
+  ;; (shell)                       ;; start a shell
+  ;; (rename-buffer "*sh-jora*") ;; rename it
+
+  ;(other-frame 1)
+  ;;(find-file-other-frame "~")
+  (find-file "~")
+  ;(find-file "~/git/emacs/elisp/.emacs_jora.el")
+  (set-default-font "Consolas 8")
+)
+(jr-start)
+
+;  ;; Here's a way to add scrollbar-like buttons to the menubar
+;  (add-menu-button nil ["Top" beginning-of-buffer])
+;  (add-menu-button nil ["<<<" scroll-down])
+;  (add-menu-button nil [" . " recenter])
+;  (add-menu-button nil [">>>" scroll-up])
+;  (add-menu-button nil ["Bot" end-of-buffer]))
+
+;; Creating a new menu pane in the menu bar to the right of 'Tools' menu
+(define-key-after
+  global-map
+  [menu-bar mymenu]
+  (cons "MyMenu" (make-sparse-keymap "hoot hoot"))
+  'tools )
+
+;; Creating a menu item, under the menu by the id '[menu-bar mymenu]'
+
+(define-key
+  global-map
+  [menu-bar mymenu td]
+  '("Tail infradc dev Log" . sag-log-idc-dev))
+
+(define-key
+  global-map
+  [menu-bar mymenu pl]
+  '("platform Log" . sag-platform-log))
+
+
+(define-key
+  global-map
+  [menu-bar mymenu nl]
+  '("Tail Sag Logs" . sag-logs))
+
+(define-key
+  global-map
+  [menu-bar mymenu ji]
+  '("Dir infradc" . jr-dir-infradc))
+
+(define-key
+  global-map
+  [menu-bar mymenu jh]
+  '("Home" . jr-home))
+
+;; creating another menu item
+(define-key
+  global-map
+  [menu-bar mymenu tp]
+  '("Previous Line" . previous-line))
+
+;; code to remove the whole menu panel
+;; (global-unset-key [menu-bar mymenu])
+
+(setq frame-title-format
+  '(:eval
+    (if buffer-file-name
+        (replace-regexp-in-string
+         "\\\\" "/"
+         (replace-regexp-in-string
+          (regexp-quote (getenv "HOME")) "~"
+          (convert-standard-filename buffer-file-name)))
+      (buffer-name))))
